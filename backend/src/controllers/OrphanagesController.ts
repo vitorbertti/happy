@@ -3,12 +3,31 @@ import { getRepository } from 'typeorm';
 import Orphanages from '../models/Orphanages';
 
 export default {
+   async index(req: Request, res: Response) {
+      const orphanagesRepository = getRepository(Orphanages);
+      const orphanages = orphanagesRepository.find();
+      return res.json(orphanages);
+   },
+
+   async show(req: Request, res: Response) {
+      const { id } = req.params;
+      const orphanagesRepository = getRepository(Orphanages);
+      const orphanage = orphanagesRepository.findOneOrFail(id);
+      return res.json(orphanage);
+   },
+
    async create(req: Request, res: Response) {
       const { name, latitude, longitude, about, instructions, opening_hours, open_on_weekends } = req.body;
 
       const orphanagesRepository = getRepository(Orphanages);
+
+      const requestImages = req.files as Express.Multer.File[];
+      const images = requestImages.map(image => {
+         return { path: image.filename };
+      })
+
       const orphanage = orphanagesRepository.create({
-         name, latitude, longitude, about, instructions, opening_hours, open_on_weekends
+         name, latitude, longitude, about, instructions, opening_hours, open_on_weekends, images,
       });
 
       await orphanagesRepository.save(orphanage);
