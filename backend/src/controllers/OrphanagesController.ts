@@ -33,7 +33,14 @@ export default {
       })
 
       const data = {
-         name, latitude, longitude, about, instructions, opening_hours, open_on_weekends, images
+         name, 
+         latitude, 
+         longitude, 
+         about, 
+         instructions, 
+         opening_hours, 
+         open_on_weekends: open_on_weekends === 'true',
+         images
       };
 
       const schema = Yup.object().shape({
@@ -47,7 +54,9 @@ export default {
          images: Yup.array(Yup.object().shape({
             path: Yup.string().required(),
          })),
-      })
+      });
+
+      // const finalData = schema.cast(data);
 
       await schema.validate(data, {
          abortEarly: false,
